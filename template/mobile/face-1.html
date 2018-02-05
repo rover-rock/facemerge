@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>Face Detection</title>
+	<link rel="stylesheet" type="text/css" href="../addons/facemerge/template/mobile/layui/layui/css/layui.css">
+<link rel="stylesheet" href="../addons/facemerge/template/mobile/swiper/css/swiper.min.css">
+<link rel="stylesheet" href="../addons/facemerge/template/mobile/swiper/css/animate.min.css">
+  <style type="text/css">
+    img{
+      width: 170px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+	
+
+
+<div class="swiper-container" style="background-image: url('../addons/facemerge/template/mobile/background.jpg');">
+  <div class="swiper-wrapper" >
+      <div class="swiper-slide"  style="display: flex;flex-direction: column;align-items: center;">
+          <div style="height: 100px;"></div>
+    <div class="ani" swiper-animate-effect="lightSpeedIn" swiper-animate-duration="1.5s" swiper-animate-delay="1s">
+    <img src="" id="facepic">
+    <img src="" id="imgget">
+    </div>
+  <div style="font-size: 1.5em;" >
+      <span class="ani" swiper-animate-effect="fadeOutUp" swiper-animate-duration="1.5s" swiper-animate-delay="0.3s" style="position: fixed;top: 20px;left: 50px;">结婚纪念册</span><br>
+      <div >
+       <button type="button" class="layui-btn layui-btn-normal layui-btn-radius " id="test1">
+      选择帅哥图片
+    </button>
+    <button class="layui-btn  layui-btn-normal layui-btn-radius layui-anim-scaleSpring" onclick="changeModel()">更换模板</button>
+  </div>
+    </div>
+
+        </div>
+  <div class="swiper-slide" style="display: flex;flex-direction: column;align-items: center;">
+    <div style="height: 100px;"></div>
+     <div class="ani" swiper-animate-effect="lightSpeedIn" swiper-animate-duration="1.5s" swiper-animate-delay="1s">
+  <img src="" id="facepic2">
+  <img src="" id="imgget2">
+    </div>
+          <div>
+    <button type="button" class="layui-btn layui-btn-normal layui-btn-radius " id="test2">
+      选择美女图片
+  </button>
+  <button class="layui-btn  layui-btn-normal layui-btn-radius layui-anim-scaleSpring" onclick="changeModel2()">更换模板</button>
+  </div>
+ 
+        </div>
+        <div class="swiper-slide" >
+          <button class="layui-btn  layui-btn-normal layui-btn-radius layui-anim-scaleSpring" onclick="merge()">合成</button><br>
+<div id="imgbox">
+  <img src="" style="width: 340px;height: 200px;">
+</div>
+        </div>
+    </div>
+    
+    
+    
+   
+</div>
+
+
+<script type="text/javascript" src="../addons/facemerge/template/mobile/jquery.min.js"></script>
+<script type="text/javascript" src="../addons/facemerge/template/mobile/layui/layui/layui.js">	</script>
+<script src="../addons/facemerge/template/mobile/swiper/js/swiper.min.js"></script>
+<script src="../addons/facemerge/template/mobile/swiper/js/swiper.animate1.0.2.min.js"></script>
+
+<script>
+  //上传1绑定
+layui.use(['layer', 'upload'], function(){
+  var layer = layui.layer
+  ,upload = layui.upload;
+    var uploadInst = upload.render({
+    elem: '#test1' //绑定元素
+    ,url: 'http://fu.dicyan.cn/app/index.php?i=12&c=entry&do=upload&m=facemerge' //上传接口
+    ,auto:false
+    ,bindAction:''
+    ,choose: function (obj) {
+      $('#test1').html('loading....');
+      var files=this.files=obj.pushFile();
+      obj.preview(function(index, file, result){
+       //得到文件base64编码，比如图片
+      ob=new Object();
+      ob.width=400;
+      ob.height=400;
+      ob.quality=0.7;
+      
+      dealImage(result,ob,proc);
+      
+   
+
+      })
+    }
+    ,before:function (res) {
+      
+    }
+    ,done: function(res){
+      
+      $('#facepic').attr('src',res['imgurl']);
+      if(res['img_get'].length<=10){
+        changeModel();
+      }
+      $('#imgget').attr('src',res['img_get']);
+
+    }
+    ,error: function(res){
+
+    }
+  });
+});
+//上传2绑定
+layui.use(['layer', 'upload'], function(){
+  var layer = layui.layer
+  ,upload = layui.upload;
+  
+    var uploadInst = upload.render({
+    elem: '#test2' //绑定元素
+    ,url: 'http://fu.dicyan.cn/app/index.php?i=12&c=entry&do=upload&m=facemerge' //上传接口
+    ,auto:false
+    ,bindAction:''
+    ,choose: function (obj) {
+      $('#test2').html('loading....');
+      var files=this.files=obj.pushFile();
+      obj.preview(function(index, file, result){
+       //得到文件base64编码，比如图片
+      ob=new Object();
+      ob.width=400;
+      ob.height=400;
+      ob.quality=0.7;
+      
+      dealImage(result,ob,proc2);
+      
+   
+
+      })
+    }
+  });
+});
+
+function proc(res) {
+  $('#facepic').attr('src',res);
+      changeModel();
+}
+function changeModel() {
+    $("#test1").html('loading......');
+   var imgurl= $('#facepic').attr('src');
+   $.post("http://fu.dicyan.cn/app/index.php?i=12&c=entry&do=changeModel&m=facemerge",{img_url:imgurl},function(result){
+    $('#imgget').attr('src',result);
+    //如果返回结果空，就再执行一次
+    if(result.length<10){
+      console.log('exec again')
+      changeModel()
+    }
+    $("#test1").html('<i class="layui-icon">&#xe67c;</i>选择图片');
+});}
+
+
+   function proc2(res) {
+  $('#facepic2').attr('src',res);
+      changeModel2();
+}
+function changeModel2() {
+    $("#test2").html('loading......');
+   var imgurl= $('#facepic2').attr('src');
+   $.post("http://fu.dicyan.cn/app/index.php?i=12&c=entry&do=changeModel&m=facemerge",{img_url:imgurl},function(result){
+    $('#imgget2').attr('src',result);
+    //如果返回结果空，就再执行一次
+    if(result.length<10){
+      console.log('exec again')
+      changeModel2()
+    }
+    $("#test2").html('<i class="layui-icon">&#xe67c;</i>选择图片');
+});}
+   /**
+ * 图片压缩，默认同比例压缩
+ * @param {Object} path 
+ *   pc端传入的路径可以为相对路径，但是在移动端上必须传入的路径是照相图片储存的绝对路径
+ * @param {Object} obj
+ *   obj 对象 有 width， height， quality(0-1)
+ * @param {Object} callback
+ *   回调函数有一个参数，base64的字符串数据
+ */
+function dealImage(path, obj,callback){
+ var img = new Image();
+ img.src = path;
+ img.onload = function(){
+  var that = this;
+  // 默认按比例压缩
+  var w = that.width,
+   h = that.height,
+   scale = w / h;
+   w = obj.width || w;
+   h = obj.height || (w / scale);
+  var quality = 0.7;  // 默认图片质量为0.7
+  //生成canvas
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  // 创建属性节点
+  var anw = document.createAttribute("width");
+  anw.nodeValue = w;
+  var anh = document.createAttribute("height");
+  anh.nodeValue = h;
+  canvas.setAttributeNode(anw);
+  canvas.setAttributeNode(anh); 
+  ctx.drawImage(that, 0, 0, w, h);
+  // 图像质量
+  if(obj.quality && obj.quality <= 1 && obj.quality > 0){
+   quality = obj.quality;
+  }
+  // quality值越小，所绘制出的图像越模糊
+  var base64 = canvas.toDataURL('image/jpeg', quality );
+  // 回调函数返回base64的值
+  callback(base64);
+
+ }
+}
+function merge() {
+  var date=new Date()
+  console.log(date.getTime())
+  $.post('http://fu.dicyan.cn/app/index.php?i=12&c=entry&do=merge&m=facemerge',{img1:$('#imgget').attr('src'),img2:$("#imgget2").attr('src')},function (result) {
+    date=new Date()
+    console.log(date.getTime())
+    $('#imgbox img').attr('src','../upload/result.png');
+  })
+  
+}
+
+var mySwiper = new Swiper ('.swiper-container', {
+    on:{
+      init: function(){
+        swiperAnimateCache(this); //隐藏动画元素 
+        swiperAnimate(this); //初始化完成开始动画
+      }, 
+      slideChangeTransitionEnd: function(){ 
+        swiperAnimate(this); //每个slide切换结束时也运行当前slide动画
+      }
+    },
+    direction: 'vertical',
+    loop: true,
+      
+    // 如果需要前进后退按钮
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    
+    // 如果需要滚动条
+    scrollbar: {
+      el: '.swiper-scrollbar',
+    },
+  })        
+</script> 
+</body>
+</html>

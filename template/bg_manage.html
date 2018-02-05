@@ -1,0 +1,107 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/facemerge/template/mobile/layui/layui/css/layui.css">
+<div class="container" id="listDiv" style="width: 80%;">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+		背景模板
+		<button class="btn btn-default" onclick="show()" style="position: relative;left: 15px;" >添加模板</button>
+	
+	</div>
+	<div class="panel-body">
+	{loop $data $index $item}
+	{if $index%3==0}
+	<div class="row">
+	{/if}
+		<div class="col-xs-6 col-sm-3">
+			<img src="{$item['image']}" style="width: 100%;height: 300px;">
+			<!-- <button class="btn btn-primary">编辑</button> --> 
+			<a class="layui-btn" href="http://fu.dicyan.cn/web/index.php?c=site&a=entry&eid=184&id={$item['id']}&action=del" onclick="confirm('确定删除？')">删除</a>
+		</div>
+	
+	{if ($index%3==2)||($index==$length-1)	}
+		 <div class="clearfix visible-xs"></div>
+ 
+	</div>
+	{/if}
+	{/loop}
+	</div>
+</div>
+</div>
+<div class="container" id="addDiv" style="display: none; width: 80%;" >
+	<form role='form' action="" method="post">
+	<input type="hidden" name="imageurl" id="imgurl">
+	<div class="form-group">
+    <label for="name">说明性文字</label>
+    <input type="text" class="form-control" id="name" placeholder="描述" name="description" style="width:70%;">
+ 	 </div>
+ 	 <div class="form-group">
+    <label for="name1">左半部分模板ID</label>
+    <input type="text" class="form-control" id="name1" placeholder="腾讯开发者文档中审核通过的模板id" name="modelid_left" style="width:70%;">
+ 	 </div>
+ 	 <div class="form-group">
+    <label for="name2">右半部分模板ID</label>
+    <input type="text" class="form-control" id="name2" placeholder="腾讯开发者文档中审核通过的模板id" name="modelid_right" style="width:70%;">
+ 	 </div>
+	<div class="form-group">
+		<button type="button" class="layui-btn" id="test1">
+  		<i class="layui-icon">&#xe67c;</i>选择模板
+		</button> 
+		<button id="upload" class="layui-btn layui-btn-normal">上传</button>
+		<a class="layui-btn layui-btn-normal" href="{php echo $this->createWebUrl('bg_manage')}">返回</a>
+	</div>
+	<div class="form-group">
+		<img src="" alt="图片预览" id="preview" width="500px" height="500px" style="border: 1px solid gray;">
+	</div>
+	<button type="submit" class="btn btn-default">提交</button>
+	</form>
+</div>
+
+
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="../addons/facemerge/template/mobile/layui/layui/layui.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	//还是要一部分一部分调试，多余的代码，会造成多余 的错误，定位起来更麻烦。。。
+	layui.use('upload', function(){
+  var upload = layui.upload;
+  console.log('description 值')
+   console.log($("input[name='description']").val())
+  //执行实例
+  var uploadInst = upload.render({
+    elem: '#test1' //绑定元素
+    ,url: 'http://fu.dicyan.cn/web/index.php?c=site&a=entry&eid=184'   //上传接口
+    ,data:{description:$("input[name='description']").val()}
+    ,auto:false
+    ,bindAction:'#upload'
+    ,choose:function (obj) {
+    	   obj.preview(function(index, file, result){
+      	
+      	$('#preview').attr('src',result) //得到文件base64编码，比如图片
+      
+    })
+    	}
+    ,before:function () {
+    	$("#upload").val('loading')
+
+    }
+    ,done: function(res){
+      console.log(res)
+      var layer=layui.layer
+      layer.msg('上传成功！')
+      $('#upload').val('上传')
+      $('#imgurl').val(res['imgurl']);
+    }
+    ,error: function(){
+      console.log('error')
+    }
+  });
+});
+
+	function show() {
+		console.log('clicked')
+		$("#listDiv").toggle()
+		$("#addDiv").toggle()
+	}
+
+</script> 
+{template 'common/footer'}

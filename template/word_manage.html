@@ -1,0 +1,39 @@
+{template 'common/header'}
+<link rel="stylesheet" type="text/css" href="../addons/facemerge/template/mobile/layui/layui/css/layui.css">
+<div class="panel panel-default">
+	<div class="panel-heading">
+		祝福语<button class="btn btn-default" style="position: relative;left: 10px;" onclick="refr()">添加祝福语</button>
+	</div>
+	<div class="panel-body" id='container'>
+		
+	<table class="table">
+  
+  <thead>
+    <tr>
+      <th>祝福语</th>
+      <th>适用婚龄</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {loop $data $index $item}
+    <tr>
+    	<td> {$item['word']}</td><td>{$item['age']}</td><td><a class="layui-btn" href="http://fu.dicyan.cn/web/index.php?c=site&a=entry&eid=185&action=edit&id={$item['id']}">编辑</a><a href="http://fu.dicyan.cn/web/index.php?c=site&a=entry&eid=185&action=del&id={$item['id']}" class="layui-btn">删除</a></td>
+    </tr>
+    {/loop}
+  </tbody>
+	</table>
+
+	</div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+	function refr() {
+		console.log('clicked')
+ 		$.get('http://fu.dicyan.cn/web/index.php?c=site&a=entry&eid=185&action=add',function (res) {
+ 			$('#container').html(res)
+ 		})
+ 	}
+</script>
+
+{template 'common/footer'}
