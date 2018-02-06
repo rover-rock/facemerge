@@ -144,12 +144,13 @@ class FacemergeModuleSite extends WeModuleSite
 		require('../addons/facemerge/vendor/TencentYoutuyun/Youtu.php');
 		require('../addons/facemerge/vendor/TencentYoutuyun/Auth.php');
 		require('../addons/facemerge/vendor/TencentYoutuyun/Http.php');
-		$appid='10116396';
-    $secretId='AKIDgKoLlzGva3K1axlX9dx62mLjuzvkvLzR';
-    $secretKey='Pm6GF1b0LXlvtgJo7E9xd6OTIzVpyvgY';
+		$appid='10117738';
+    $secretId='AKIDNZWDepcTyDCvObsLp30h8JDrGSO4reXB';
+    $secretKey='XopZ3i9LI2bv0qQr43nIemiT2NVP4Ugd';
     $userid='362463215';
     // $model_ids=array("﻿cf_fuwa_qiji","cf_fuwa_yasuiqian","cf_lover_fanli","cf_lover_libai","cf_lover_sunshang","cf_lover_wuque","cf_lover_xishi","cf_lover_yuhuan","cf_movie_baiqian","cf_movie_fengjiu");
-    $model_ids=array(array('male'=>'youtu_70821_20180131183947_7153','female'=>'youtu_70821_20180131183955_7154','location'=>0),array('male'=>'youtu_70821_20180131183825_7147','female'=>'youtu_70821_20180131183838_7148','location'=>0),array('female'=>'youtu_70821_20180131183753_7145','male'=>'youtu_70821_20180131183812_7146','location'=>1));
+    //$model_ids=array(array('male'=>'youtu_70821_20180131183947_7153','female'=>'youtu_70821_20180131183955_7154','location'=>0),array('male'=>'youtu_70821_20180131183825_7147','female'=>'youtu_70821_20180131183838_7148','location'=>0),array('female'=>'youtu_70821_20180131183753_7145','male'=>'youtu_70821_20180131183812_7146','location'=>1));
+    $model_ids=array(array('male'=>'youtu_71338_20180205121719_7465','female'=>'youtu_71338_20180205121715_7464','location'=>1),array('male'=>'youtu_71338_20180205121731_7467','female'=>'youtu_71338_20180205121726_7466','location'=>1),array('male'=>'youtu_71338_20180205121748_7469','female'=>'youtu_71338_20180205121738_7468','location'=>1),array('male'=>'youtu_71338_20180205121759_7471','female'=>'youtu_71338_20180205121754_7470','location'=>1),array('male'=>'youtu_71338_20180205121804_7472','female'=>'youtu_71338_20180205121808_7473','location'=>0));
     $m=pdo_fetchcolumn('select modelid from ims_face_user where openid=:openid',array(':openid'=>$_W['openid']));
     if($m<0){
     	$i=rand(0,count($model_ids)-1);
@@ -249,22 +250,22 @@ class FacemergeModuleSite extends WeModuleSite
 		}
 		$img1=imagecreatefromstring($ii1);
 		$img2=imagecreatefromstring($ii2);
-		$img3=imagecreatefromstring(file_get_contents($this->qrcode()));
-		$img4=imagecreatefromstring(file_get_contents('../addons/facemerge/template/mobile/footer.png'));
+		//$img3=imagecreatefromstring(file_get_contents($this->qrcode()));
+		$img4=imagecreatefromstring(file_get_contents('../addons/facemerge/template/mobile/footer.jpg'));
 		$img5=imagecreatefromstring(file_get_contents('../addons/facemerge/template/mobile/header.jpg'));
 		$isize1w=imagesx($img1);
 		$isize1h=imagesy($img1);
 		$isize2w=imagesx($img2);
 		$isize2h=imagesy($img2);
-		$isize3w=imagesx($img3);
-		$isize3h=imagesy($img3);
+		//$isize3w=imagesx($img3);
+		//$isize3h=imagesy($img3);
 		$isize4w=imagesx($img4);
 		$isize4h=imagesy($img4);
 		$isize5w=imagesx($img5);
 		$isize5h=imagesy($img5);
 		$width=$isize1w+$isize2w;	                                              //图像宽度
  		$height=$isize1h>$isize2h?$isize1h:$isize2h;                                             //图像高度
-  $img=imagecreatetruecolor($width,$height+$isize3h+100+80);  
+  $img=imagecreatetruecolor($width,$height+$isize4h+80-300);  
   $white=imagecolorallocate($img,255,255,255);             //白色
  	imagefill($img,0,0,$white);                              //将背景设置为白色
  //imageline($img,20,20,260,150,$red);                      //画出一条红色的线
@@ -273,8 +274,8 @@ class FacemergeModuleSite extends WeModuleSite
   	imagecopyresized($img, $img5, 0, 0, 0, 0, $width, 80, $isize5w, $isize5h);
  	imagecopy($img, $img1, 0, 80, 0, 0, $isize1w,$isize1h);
  	imagecopy($img, $img2, $isize1w,80, 0, 0, $isize2w,$isize2h);
- 	imagecopyresized($img,$img4,0,$isize1h+80,0,0,$width,$isize3h+100,$isize4w,$isize4h);
- 	imagecopy($img,$img3,10,20+$isize1h+80,0,0,$isize3w,$isize3h);
+ 	imagecopyresized($img,$img4,0,$isize1h+80,0,0,$width,$isize4h-300,$isize4w,$isize4h);
+ 	//imagecopy($img,$img3,10,20+$isize1h+80,0,0,$isize3w,$isize3h);
  	//imagestring($img, 5, $isize3w,$isize1h, 'this is our whole story...please shakeit ..sjdifjsia', $black);
  //header("content-type: image/png");                    //输出图像的MIME类型
 	$suiji=$this->generate_password(6);
@@ -283,7 +284,9 @@ class FacemergeModuleSite extends WeModuleSite
  imagepng($img,$image_name);     //这种输出方式，存在编码问题 base64?                                //输出一个PNG图像数据
  imagedestroy($img);  
  imagedestroy($img1);  
- imagedestroy($img2);  
+ imagedestroy($img2);
+ imagedestroy($img4);
+ imagedestroy($img5);  
  return $image_name;
 
 	}
